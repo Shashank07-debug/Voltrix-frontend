@@ -1,73 +1,121 @@
-# Welcome to your Lovable project
+<div align="center">
 
-## Project info
+# ⚡ Voltrix
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+### AI-Powered Full-Stack App Builder — Describe It. Watch It Build Itself.
 
-## How can I edit this code?
+*A Lovable.dev-inspired SaaS platform where natural language becomes working React applications, streamed live into an in-browser IDE.*
 
-There are several ways of editing your application.
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-Build-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
+[![Tailwind](https://img.shields.io/badge/Tailwind-CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+[![License](https://img.shields.io/badge/License-Unspecified-lightgrey)]()
 
-**Use Lovable**
+**[Backend Repo →](https://github.com/Shashank07-debug/Voltrix-)**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+</div>
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## What is this?
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+You type a sentence. Voltrix's AI agent reads your existing project, plans the change, and streams back real, working React files — live, token by token — into a code editor you can watch, inspect, and run in a sandboxed preview, all without leaving the browser.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+This repo is the **frontend**: the chat interface, the IDE workspace, the collaboration layer, and everything the user actually touches. The AI reasoning and code generation happens in the [Spring Boot + Spring AI backend](https://github.com/Shashank07-debug/Voltrix-).
 
-Follow these steps:
+## ✨ Highlights
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+<table>
+<tr>
+<td width="50%" valign="top">
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 🤖 Live AI Code Generation
+Chat-driven, streaming generation via Server-Sent Events. Files appear as the model writes them — not a spinner, then a dump. The agent is file-tree-aware, so edits stay consistent with what already exists in the project.
 
-# Step 3: Install the necessary dependencies.
-npm i
+### 💻 A Real IDE, In the Browser
+Type-coded file tree, tabbed multi-file editor with syntax highlighting, and a live sandbox preview that compiles and runs the generated app on demand.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+</td>
+<td width="50%" valign="top">
+
+### 👥 Built for Teams
+Invite collaborators with **Owner / Editor / Viewer** roles. Role state is visible everywhere — navbar badges, share modal, workspace controls — not hidden behind a click.
+
+### 🎨 Theming That Actually Works
+A sitewide dark/light toggle that reaches *every* surface — dashboard, workspace, modals, even the code editor gutter — not just the top half of the page.
+
+</td>
+</tr>
+</table>
+
+### 📱 Responsive Down to the Fold
+Tested and tuned across desktop, tablet, mobile, and foldable/flip form factors — including the awkward near-square unfolded state most responsive builds ignore — with smooth, `prefers-reduced-motion`-aware transitions between breakpoints.
+
+### 🔐 Auth & Project Management
+JWT-based sign-in, a project dashboard with per-project role and stack metadata, and one-click launch into the workspace.
+
+## 🛠 Tech Stack
+
+| | |
+|---|---|
+| **Core** | React 18 · TypeScript (strict) · Vite |
+| **Styling** | Tailwind CSS · shadcn-ui |
+| **Streaming** | Server-Sent Events over `fetch` + `ReadableStream` (POST-based — not native `EventSource`) |
+| **Backend** | Spring Boot 4 · Spring AI · PostgreSQL · MinIO — [see backend repo](https://github.com/Shashank07-debug/Voltrix-) |
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js & npm ([install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
+- The [Voltrix backend](https://github.com/Shashank07-debug/Voltrix-) running locally (default: `http://localhost:8082`)
+
+### Setup
+
+```bash
+# 1. Clone it
+git clone https://github.com/Shashank07-debug/Voltrix-frontend.git
+cd Voltrix-frontend
+
+# 2. Install
+npm install
+
+# 3. Run
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Runs at `http://localhost:5173`. The backend needs to be running for auth, streaming, and file operations to work.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 📁 Structure
 
-**Use GitHub Codespaces**
+```
+src/
+├── components/      # Chat panel, file tree, editor, modals, cards
+├── hooks/           # Theme, data fetching
+├── pages/           # Projects Portal, Project Workspace, Auth
+├── api.ts           # Backend client — auth, projects, streaming chat, members
+├── types.ts         # Shared types
+└── App.tsx
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🧠 How It Actually Got Built
 
-## What technologies are used for this project?
+Scaffolded fast with AI-assisted generation, then hardened the slow way: screenshot the UI, find the specific thing that's wrong — a role badge rendering empty, a theme toggle that only painted half the screen, a chat call throwing `TypeError: api.streamChatMessage is not a function` — write a scoped fix prompt, verify, repeat. That included tracing a frontend/backend method-name mismatch back to its root cause instead of patching around it, and taking a "working" dark-mode-only app through four separate rounds of light-theme coverage until every surface actually matched.
 
-This project is built with:
+The point isn't that AI wrote the code. It's the debugging discipline layered on top of it.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🗺 Roadmap
 
-## How can I deploy this project?
+- [ ] Automated test coverage (Vitest is configured, not yet used)
+- [ ] CI pipeline
+- [ ] Live hosted demo
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## 📄 License
 
-## Can I connect a custom domain to my Lovable project?
+Not yet specified.
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+<div align="center">
+<sub>Built by <a href="https://github.com/Shashank07-debug">Shashank M N</a></sub>
+</div>
