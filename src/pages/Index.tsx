@@ -24,10 +24,10 @@ const Index = () => {
       </div>
 
       <div className="relative flex flex-col items-center">
-        <div className="w-20 h-20 rounded-2xl bg-primary/20 flex items-center justify-center mb-6 glow-effect">
-          <Sparkles className="w-10 h-10 text-primary" />
+        <div className="w-20 h-20 rounded-full p-1 bg-slate-900 border border-cyan-500/40 shadow-[0_0_30px_rgba(56,189,248,0.4)] flex items-center justify-center mb-6 overflow-hidden">
+          <img src="/voltrix-logo.png" alt="Voltrix Logo" className="w-full h-full object-contain rounded-full" />
         </div>
-        <h1 className="text-3xl font-bold gradient-text mb-4">Lovable</h1>
+        <h1 className="text-3xl font-extrabold bg-gradient-to-r from-white via-cyan-200 to-purple-300 bg-clip-text text-transparent mb-4">Voltrix</h1>
         <div className="flex items-center gap-2 text-muted-foreground">
           <Loader2 className="w-4 h-4 animate-spin" />
           <span>Loading...</span>

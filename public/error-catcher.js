@@ -1,6 +1,6 @@
 
 (function () {
-    const ERROR_STORE_KEY = "__PROJECT_COMPANION_ERRORS__";
+    const ERROR_STORE_KEY = "__VOLTRIX_ERRORS__";
     window[ERROR_STORE_KEY] = window[ERROR_STORE_KEY] || [];
 
     // Helper to send messages to parent
@@ -129,5 +129,5 @@
         checkForViteErrorOverlay();
     }
 
-    console.log('[Project Companion] Error Listener Initialized');
+    console.log('[Voltrix] Error Listener Initialized');
 })();

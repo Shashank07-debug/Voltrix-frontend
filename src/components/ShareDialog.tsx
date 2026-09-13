@@ -17,6 +17,25 @@ interface ShareDialogProps {
     onOpenChange?: (open: boolean) => void;
 }
 
+const extractRole = (member: ProjectMember): ProjectRole => {
+    const rawRole = member.role || (member as any).projectRole || (member as any).roleName;
+    if (!rawRole) return 'VIEWER';
+    const upper = String(rawRole).toUpperCase();
+    if (upper === 'OWNER' || upper === 'EDITOR' || upper === 'VIEWER') {
+        return upper as ProjectRole;
+    }
+    return 'VIEWER';
+};
+
+const getRoleLabel = (role: ProjectRole) => {
+    switch (role) {
+        case 'EDITOR': return 'Can edit';
+        case 'VIEWER': return 'Can view';
+        case 'OWNER': return 'Owner';
+        default: return 'Can view';
+    }
+};
+
 export function ShareDialog({ projectId, trigger, open, onOpenChange }: ShareDialogProps) {
     const { toast } = useToast();
     const [members, setMembers] = useState<ProjectMember[]>([]);
@@ -44,9 +63,9 @@ export function ShareDialog({ projectId, trigger, open, onOpenChange }: ShareDia
     const loadMembers = async () => {
         try {
             const data = await api.getProjectMembers(projectId);
+            console.log("[ShareDialog] Fetched members data from API:", data);
             setMembers(data);
         } catch (error) {
-            // Fail silently or show placeholder if valid "mock" experience is needed
             console.error("Failed to load members", error);
         }
     };
@@ -90,15 +109,15 @@ export function ShareDialog({ projectId, trigger, open, onOpenChange }: ShareDia
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-            <DialogContent className="sm:max-w-md gap-0 p-0 overflow-hidden border-none shadow-2xl">
-                <div className="p-6 pb-4">
+            <DialogContent className="w-[95vw] sm:max-w-md max-h-[90vh] overflow-hidden border-none shadow-2xl rounded-2xl flex flex-col gap-0 p-0">
+                <div className="p-4 sm:p-6 pb-4 overflow-y-auto max-h-[85vh]">
                     <DialogHeader className="mb-4">
-                        <DialogTitle className="text-xl">Share project</DialogTitle>
+                        <DialogTitle className="text-lg sm:text-xl">Share project</DialogTitle>
                     </DialogHeader>
 
                     {/* Invite Section */}
                     <div className="space-y-3 mb-6">
-                        <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                             <Input
                                 placeholder="Email or username"
                                 className="flex-1 bg-muted/50 border-input/50"
@@ -134,7 +153,7 @@ export function ShareDialog({ projectId, trigger, open, onOpenChange }: ShareDia
                             {members.length === 0 && (
                                 <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30">
                                     <Avatar className="h-9 w-9">
-                                        <AvatarFallback>ME</AvatarFallback>
+                                        <AvatarFallback className="voltrix-avatar-dark-gradient text-white font-bold text-xs">ME</AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1 text-sm">
                                         <div className="font-medium">You</div>
@@ -144,40 +163,47 @@ export function ShareDialog({ projectId, trigger, open, onOpenChange }: ShareDia
                                 </div>
                             )}
 
-                            {members.map(member => (
-                                <div key={member.userId} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors">
-                                    <Avatar className="h-9 w-9">
-                                        <AvatarFallback className="text-xs font-medium">
-                                            {member.name ? member.name.charAt(0).toUpperCase() : member.username.slice(0, 2).toUpperCase()}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div className="flex-1 min-w-0 text-sm">
-                                        <div className="font-medium truncate">{member.name || member.username}</div>
-                                        <div className="text-xs text-muted-foreground truncate">{member.username}</div>
-                                    </div>
+                            {members.map(member => {
+                                const role = extractRole(member);
+                                console.log(`[ShareDialog] Member ${member.username}: rawRole=${member.role}, extractedRole=${role}, label=${getRoleLabel(role)}`);
 
-                                    {member.role === 'OWNER' ? (
-                                        <span className="text-xs text-muted-foreground px-2 whitespace-nowrap">Owner</span>
-                                    ) : (
-                                        <Select
-                                            defaultValue={member.role}
-                                            onValueChange={(val) => {
-                                                if (val === 'REMOVE') handleRemoveMember(member.userId);
-                                                else handleRoleChange(member.userId, val as ProjectRole);
-                                            }}
-                                        >
-                                            <SelectTrigger className="h-8 w-[100px] text-xs border-none bg-transparent hover:bg-muted focus:ring-1 shadow-none">
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent align="end">
-                                                <SelectItem value="EDITOR">Can edit</SelectItem>
-                                                <SelectItem value="VIEWER">Can view</SelectItem>
-                                                <SelectItem value="REMOVE" className="text-destructive focus:text-destructive">Remove</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    )}
-                                </div>
-                            ))}
+                                return (
+                                    <div key={member.userId} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors">
+                                        <Avatar className="h-9 w-9">
+                                            <AvatarFallback className="text-xs font-bold voltrix-avatar-dark-gradient text-white">
+                                                {member.name ? member.name.charAt(0).toUpperCase() : member.username.slice(0, 2).toUpperCase()}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex-1 min-w-0 text-sm">
+                                            <div className="font-medium truncate">{member.name || member.username}</div>
+                                            <div className="text-xs text-muted-foreground truncate">{member.username}</div>
+                                        </div>
+
+                                        {role === 'OWNER' ? (
+                                            <span className="text-xs text-muted-foreground px-2.5 py-1 font-medium bg-muted/30 rounded-md whitespace-nowrap">
+                                                Owner
+                                            </span>
+                                        ) : (
+                                            <Select
+                                                value={role}
+                                                onValueChange={(val) => {
+                                                    if (val === 'REMOVE') handleRemoveMember(member.userId);
+                                                    else handleRoleChange(member.userId, val as ProjectRole);
+                                                }}
+                                            >
+                                                <SelectTrigger className="h-8 w-[110px] text-xs border border-white/10 bg-muted/30 hover:bg-muted/60 focus:ring-1 focus:ring-[#4F8CFF] shadow-none">
+                                                    <span>{getRoleLabel(role)}</span>
+                                                </SelectTrigger>
+                                                <SelectContent align="end">
+                                                    <SelectItem value="EDITOR">Can edit</SelectItem>
+                                                    <SelectItem value="VIEWER">Can view</SelectItem>
+                                                    <SelectItem value="REMOVE" className="text-destructive focus:text-destructive">Remove access</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

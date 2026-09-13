@@ -3,6 +3,8 @@ import { FileTree } from "./FileTree";
 import { CodeEditor } from "./CodeEditor";
 import { FileTabs } from "./FileTabs";
 import { api, FileNode, OPEN_TABS_KEY, ACTIVE_TAB_KEY } from "@/lib/api";
+import { FolderTree, X } from "lucide-react";
+import { Button } from "./ui/button";
 
 interface CodePanelProps {
   projectId: string;
@@ -29,6 +31,7 @@ export function CodePanel({ projectId, updatedFiles }: CodePanelProps) {
   const [fileContent, setFileContent] = useState<string>("");
   const [isLoadingTree, setIsLoadingTree] = useState(true);
   const [isLoadingFile, setIsLoadingFile] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Load tabs from localStorage
   useEffect(() => {
@@ -138,6 +141,8 @@ export function CodePanel({ projectId, updatedFiles }: CodePanelProps) {
       setOpenTabs((prev) => [...prev, path]);
     }
     setActiveTab(path);
+    // Auto-close sidebar on mobile after selecting a file
+    setIsSidebarOpen(false);
   }, [openTabs]);
 
   const handleCloseTab = useCallback((path: string) => {
@@ -160,11 +165,31 @@ export function CodePanel({ projectId, updatedFiles }: CodePanelProps) {
   }, []);
 
   return (
-    <div className="flex h-full">
-      {/* File Tree */}
-      <div className="w-56 shrink-0 border-r border-border/50 overflow-y-auto bg-panel">
-        <div className="panel-header">
-          <span className="text-sm font-medium">Files</span>
+    <div className="flex h-full bg-[#060913] dark:bg-[#060913] light:bg-[#F8FAFC] relative overflow-hidden">
+      {/* Mobile Sidebar Overlay Backdrop */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-20 md:hidden backdrop-blur-xs" 
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* File Tree Sidebar */}
+      <div className={`
+        fixed inset-y-0 left-0 z-30 w-64 bg-[#080C17] dark:bg-[#080C17] light:bg-[#F1F5F9] border-r border-white/10 dark:border-white/10 light:border-black/10 overflow-y-auto transition-transform duration-200 ease-in-out
+        md:static md:translate-x-0 md:w-56 md:shrink-0 md:z-auto
+        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+      `}>
+        <div className="px-3.5 py-2.5 border-b border-white/10 dark:border-white/10 light:border-black/10 flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#94A3B8] dark:text-[#94A3B8] light:text-[#475569]">Files</span>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-6 w-6 text-[#94A3B8] hover:text-white md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <X className="w-4 h-4" />
+          </Button>
         </div>
         <FileTree
           files={files}
@@ -175,14 +200,30 @@ export function CodePanel({ projectId, updatedFiles }: CodePanelProps) {
       </div>
 
       {/* Code Editor with Tabs */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* File Tabs */}
-        <FileTabs
-          openTabs={openTabs}
-          activeTab={activeTab}
-          onSelectTab={handleSelectTab}
-          onCloseTab={handleCloseTab}
-        />
+      <div className="flex-1 flex flex-col min-w-0 bg-[#060913] dark:bg-[#060913] light:bg-[#F8FAFC]">
+        <div className="flex items-center border-b border-white/10 dark:border-white/10 light:border-black/10 bg-[#04060E] dark:bg-[#04060E] light:bg-[#E2E8F0]">
+          {/* Mobile File Tree Toggle Rail Icon */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 text-[#94A3B8] dark:text-[#94A3B8] light:text-[#475569] hover:text-[#F8FAFC] hover:bg-[#4F8CFF]/20 active:bg-[#4F8CFF]/30 active:scale-95 md:hidden shrink-0 border-r border-white/10 dark:border-white/10 light:border-black/10 rounded-none transition-all duration-150 motion-reduce:transition-none cursor-pointer group relative"
+            onClick={() => setIsSidebarOpen(true)}
+            title="Files — Toggle Directory Tree"
+            aria-label="Toggle File Tree"
+          >
+            <FolderTree className="w-4 h-4 text-[#7CC7FF] dark:text-[#7CC7FF] light:text-[#0284C7] group-hover:scale-110 transition-transform duration-150 motion-reduce:transition-none" />
+          </Button>
+
+          {/* File Tabs */}
+          <div className="flex-1 min-w-0">
+            <FileTabs
+              openTabs={openTabs}
+              activeTab={activeTab}
+              onSelectTab={handleSelectTab}
+              onCloseTab={handleCloseTab}
+            />
+          </div>
+        </div>
         
         {/* Editor */}
         <div className="flex-1 overflow-hidden">

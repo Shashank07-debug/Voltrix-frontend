@@ -1,6 +1,6 @@
 import { ChatMessage, DeployResponse, FileNode, LoginCredentials, LoginResponse, ProjectSummaryResponse, ProjectRequest, ProjectResponse, ProjectMember, ProjectRole, SignupRequest, AuthResponse } from "./types";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://localhost:8082";
 
 export const getAuthToken = () => localStorage.getItem("auth_token");
 
