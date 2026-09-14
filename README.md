@@ -10,7 +10,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-Build-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
 [![Tailwind](https://img.shields.io/badge/Tailwind-CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![License](https://img.shields.io/badge/License-Unspecified-lightgrey)]()
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **[Backend Repo →](https://github.com/Shashank07-debug/Voltrix-)**
 
