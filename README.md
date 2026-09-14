@@ -112,7 +112,9 @@ The point isn't that AI wrote the code. It's the debugging discipline layered on
 
 ## 📄 License
 
-Not yet specified.
+MIT © [Shashank M N](https://github.com/Shashank07-debug)
+
+See [LICENSE](LICENSE) for full text.
 
 ---
 
